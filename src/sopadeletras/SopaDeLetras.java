@@ -105,7 +105,7 @@ public class SopaDeLetras {
                     ingresarPalabras();
                     break;
                 case 2:
-
+                    modificarPalabras();
                     break;
                 case 3:
 
@@ -136,7 +136,7 @@ public class SopaDeLetras {
         palabras = new String[cantidadPalabras];
         sc.nextLine();
         //Ciclo para ingresar palabras segun el dato ingresado
-        System.out.println("Ingrese palabras de 6 a 15 letras: ");
+        System.out.print("Ingrese palabras de 6 a 15 letras: ");
         for (int i = 0; i < cantidadPalabras; i++) {
             System.out.print((i + 1) + ") ");
             String palabraIngresada = sc.nextLine().toUpperCase();
@@ -150,4 +150,40 @@ public class SopaDeLetras {
         }
     }
 
+    public static void modificarPalabras() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ingresa la palabra a editar: ");
+        String palabraEditar = sc.nextLine().toUpperCase();
+        //Busca el indice de la palabra a editar
+        int indicePalabra = buscarPalabra(palabraEditar);
+        //Valida si la palabra fue encontrada en el arreglo
+        if (indicePalabra != -1) {
+            System.out.println("Ingrese la nueva palabra de 6 a 15 letras: ");
+            String palabraNueva = sc.nextLine().toUpperCase();
+            //Validacion para comprobar la longitud de la palabra
+            if (palabraNueva.length() >= 6 && palabraNueva.length() <= 15) {
+                //Busca la palabra vieja y la remplaza por la nueva 
+                palabras[indicePalabra] = palabraNueva;
+                System.out.println("Palabra modificada correctamente");
+            } else {
+                System.out.println("La palabra ingresa no cumple con la longitud");
+            }
+        } else {
+            System.out.println("Palabra no encontrada");
+        }
+    }
+
+    public static int buscarPalabra(String palabra) {
+        for (int i = 0; i < cantidadPalabras; i++) {
+            //Valida si la palabra existe dentro del arreglo palabras
+            if (palabras[i].equals(palabra)) {
+                //Retorna el indice de la palabra encontrada
+                return i;
+            }
+        }
+        //Retorna falso si la palabra no se encuentra
+        return -1;
+    }
 }
