@@ -108,7 +108,7 @@ public class SopaDeLetras {
                     modificarPalabras();
                     break;
                 case 3:
-
+                    eliminarPalabra();
                     break;
                 case 4:
                     salir = true;
@@ -136,7 +136,7 @@ public class SopaDeLetras {
         palabras = new String[cantidadPalabras];
         sc.nextLine();
         //Ciclo para ingresar palabras segun el dato ingresado
-        System.out.print("Ingrese palabras de 6 a 15 letras: ");
+        System.out.println("Ingrese palabras de 6 a 15 letras: ");
         for (int i = 0; i < cantidadPalabras; i++) {
             System.out.print((i + 1) + ") ");
             String palabraIngresada = sc.nextLine().toUpperCase();
@@ -150,6 +150,7 @@ public class SopaDeLetras {
         }
     }
 
+    //Metodo para modificar palabra dentro del arreglo palabras
     public static void modificarPalabras() {
 
         Scanner sc = new Scanner(System.in);
@@ -175,6 +176,29 @@ public class SopaDeLetras {
         }
     }
 
+    //Metodo para eliminar palabra dentro del arreglo palabras
+    public static void eliminarPalabra() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ingresa la palabra a eliminar: ");
+        String palabraEliminar = sc.nextLine().toUpperCase();
+        //Busca el indice de la palabra a eliminar
+        int indicePalabra = buscarPalabra(palabraEliminar);
+        ////Valida si la palabra fue encontrada en el arreglo
+        if (indicePalabra != -1) {
+            //Recorre la lista deasde la posicion de la palabra a eliminar hasta el final del arreglo
+            for (int i = indicePalabra; i < palabras.length - 1; i++) {
+                //Despalza los elementos hacia la izquierda y sobreescribe la palabra 
+                //con la siguiente elemento
+                palabras[i] = palabras[i + 1];
+            }
+            //Se coloca null en la ultima posicion 
+            palabras[palabras.length - 1] = null;
+        }
+    }
+
+    //Metodo para buscar palabras dentro del arreglo palabras
     public static int buscarPalabra(String palabra) {
         for (int i = 0; i < cantidadPalabras; i++) {
             //Valida si la palabra existe dentro del arreglo palabras
