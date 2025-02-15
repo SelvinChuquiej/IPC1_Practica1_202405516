@@ -40,6 +40,12 @@ public class SopaDeLetras {
             System.out.println("4. Informacion");
             System.out.println("5. Salir");
             System.out.println("----------------------");
+
+            while (!sc.hasNextInt()) {
+                System.out.println("Porfavor ingresa un dijito");
+                sc.nextLine();
+            }
+
             int opcion = sc.nextInt();
 
             switch (opcion) {
@@ -66,11 +72,15 @@ public class SopaDeLetras {
 
     public static void nuevaPartida() {
 
+        palabras = new String[0];
+        cantidadPalabras = 0;
+
         boolean salir = false;
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Ingresa tu nombre: ");
         String nombre = sc.nextLine();
+        palabras = Arrays.copyOf(palabras, palabras.length);
 
         //Crea una copia del arreglo pero con un tamaño incrementado en 1
         usuarios = Arrays.copyOf(usuarios, usuarios.length + 1);
@@ -98,6 +108,12 @@ public class SopaDeLetras {
             System.out.println("2. Jugar");
             System.out.println("3. Terminar Partida");
             System.out.println("----------------------");
+
+            while (!sc.hasNextInt()) {
+                System.out.println("Porfavor ingresa un dijito");
+                sc.nextLine();
+            }
+
             int opcion = sc.nextInt();
 
             switch (opcion) {
@@ -126,8 +142,14 @@ public class SopaDeLetras {
             System.out.println("1. Ingresar palabras");
             System.out.println("2. Modificar palabras");
             System.out.println("3. Eliminar palabras");
-            System.out.println("4. Regresar");
+            System.out.println("4. Mostrar palabras");
+            System.out.println("5. Regresar");
             System.out.println("----------------------");
+
+            while (!sc.hasNextInt()) {
+                System.out.println("Porfavor ingresa un dijito");
+                sc.nextLine();
+            }
 
             int opcion = sc.nextInt();
 
@@ -142,6 +164,9 @@ public class SopaDeLetras {
                     eliminarPalabra();
                     break;
                 case 4:
+                    mostrarPalabras();
+                    break;
+                case 5:
                     salir = true;
                     break;
                 default:
@@ -167,43 +192,58 @@ public class SopaDeLetras {
         palabras = new String[cantidadPalabras];
         sc.nextLine();
         //Ciclo para ingresar palabras segun el dato ingresado
+
         System.out.println("Ingrese palabras de 6 a 15 letras: ");
         for (int i = 0; i < cantidadPalabras; i++) {
+
             System.out.print((i + 1) + ") ");
             String palabraIngresada = sc.nextLine().toUpperCase();
-            //Validacion para comprobar la longitud de la palabra
-            if (palabraIngresada.length() >= 6 && palabraIngresada.length() <= 15) {
+
+            int indicePalabra = buscarPalabra(palabraIngresada);
+            if (indicePalabra != -1) {
+                System.out.println("Esa palabra ya la has ingresado");
+                i--;
+            } //Validacion para comprobar la longitud de la palabra
+            else if (palabraIngresada.length() >= 6 && palabraIngresada.length() <= 15) {
                 palabras[i] = palabraIngresada;
             } else {
                 System.out.println("La palabra ingresa no cumple con la longitud");
                 i--;
             }
+
         }
     }
-
     //Metodo para modificar palabra dentro del arreglo palabras
+
     public static void modificarPalabras() {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Ingresa la palabra a editar: ");
-        String palabraEditar = sc.nextLine().toUpperCase();
-        //Busca el indice de la palabra a editar
-        int indicePalabra = buscarPalabra(palabraEditar);
-        //Valida si la palabra fue encontrada en el arreglo
-        if (indicePalabra != -1) {
-            System.out.println("Ingrese la nueva palabra de 6 a 15 letras: ");
-            String palabraNueva = sc.nextLine().toUpperCase();
-            //Validacion para comprobar la longitud de la palabra
-            if (palabraNueva.length() >= 6 && palabraNueva.length() <= 15) {
-                //Busca la palabra vieja y la remplaza por la nueva 
-                palabras[indicePalabra] = palabraNueva;
-                System.out.println("Palabra modificada correctamente");
-            } else {
-                System.out.println("La palabra ingresa no cumple con la longitud");
-            }
+        if (cantidadPalabras == 0) {
+            System.out.println("Aun no se han agregado palabras");
         } else {
-            System.out.println("Palabra no encontrada");
+            System.out.print("Ingresa la palabra a editar: ");
+            String palabraEditar = sc.nextLine().toUpperCase();
+            //Busca el indice de la palabra a editar
+            int indicePalabra = buscarPalabra(palabraEditar);
+            //Valida si la palabra fue encontrada en el arreglo
+            if (indicePalabra != -1) {
+                System.out.println("Ingrese la nueva palabra de 6 a 15 letras: ");
+                String palabraNueva = sc.nextLine().toUpperCase();
+
+                if (buscarPalabra(palabraNueva) != -1) {
+                    System.out.println("Palabra ya existe ingresa nuevamente");
+                    //Validacion para comprobar la longitud de la palabra
+                } else if (palabraNueva.length() >= 6 && palabraNueva.length() <= 15) {
+                    //Busca la palabra vieja y la remplaza por la nueva 
+                    palabras[indicePalabra] = palabraNueva;
+                    System.out.println("Palabra modificada correctamente");
+                } else {
+                    System.out.println("La palabra ingresa no cumple con la longitud");
+                }
+            } else {
+                System.out.println("Palabra no encontrada");
+            }
         }
     }
 
@@ -212,20 +252,38 @@ public class SopaDeLetras {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Ingresa la palabra a eliminar: ");
-        String palabraEliminar = sc.nextLine().toUpperCase();
-        //Busca el indice de la palabra a eliminar
-        int indicePalabra = buscarPalabra(palabraEliminar);
-        ////Valida si la palabra fue encontrada en el arreglo
-        if (indicePalabra != -1) {
-            //Recorre la lista deasde la posicion de la palabra a eliminar hasta el final del arreglo
-            for (int i = indicePalabra; i < palabras.length - 1; i++) {
-                //Despalza los elementos hacia la izquierda y sobreescribe la palabra 
-                //con la siguiente elemento
-                palabras[i] = palabras[i + 1];
+        if (cantidadPalabras == 0) {
+            System.out.println("Aun no se han agregado palabras");
+        } else {
+            System.out.print("Ingresa la palabra a eliminar: ");
+            String palabraEliminar = sc.nextLine().toUpperCase();
+            //Busca el indice de la palabra a eliminar
+            int indicePalabra = buscarPalabra(palabraEliminar);
+            //Valida si la palabra fue encontrada en el arreglo
+            if (indicePalabra != -1) {
+                //Recorre la lista deasde la posicion de la palabra a eliminar hasta el final del arreglo
+                for (int i = indicePalabra; i < palabras.length - 1; i++) {
+                    //Despalza los elementos hacia la izquierda y sobreescribe la palabra 
+                    //con la siguiente elemento
+                    palabras[i] = palabras[i + 1];
+                }
+                //Se coloca null en la ultima posicion 
+                palabras[palabras.length - 1] = null;
+                System.out.println("Palabra eliminada correctamente");
+            } else {
+                System.out.println("Esa palabra no existe");
             }
-            //Se coloca null en la ultima posicion 
-            palabras[palabras.length - 1] = null;
+        }
+    }
+
+    //Metodo para mostrar las palabras que se van guardando
+    public static void mostrarPalabras() {
+
+        System.out.println("Palabras guardadas: ");
+        for (int i = 0; i < cantidadPalabras; i++) {
+            if (palabras[i] != null) {
+                System.out.println((i + 1) + ") " + palabras[i]);
+            }
         }
     }
 
@@ -237,9 +295,13 @@ public class SopaDeLetras {
         int intentos = 4;
         int partidaActual = puntuaciones.length - 1;
 
-        iniciarTablero();
-        colocarPalabras();
-        mostrarTablero();
+        if (cantidadPalabras == 0) {
+            System.out.println("Aun no se han agregado palabras");
+        } else {
+            iniciarTablero();
+            colocarPalabras();
+            mostrarTablero();
+        }
 
         //Mientra intentos no sea 0 y las palabras encontradas no sea igual a 
         //la cantidad de palabras no se terminara el juego
@@ -427,7 +489,7 @@ public class SopaDeLetras {
     public static int buscarPalabra(String palabra) {
         for (int i = 0; i < cantidadPalabras; i++) {
             //Valida si la palabra existe dentro del arreglo palabras
-            if (palabras[i].equals(palabra)) {
+            if (palabras[i] != null && palabras[i].equalsIgnoreCase(palabra)) {
                 //Retorna el indice de la palabra encontrada
                 return i;
             }
@@ -437,41 +499,58 @@ public class SopaDeLetras {
     }
 
     public static void historialPartidas() {
-        System.out.println("| Usuarios | Puntuaciones | Fallos | Palabras Encontradas |");
-        for (int i = 0; i < usuarios.length; i++) {
-            System.out.println("| " + usuarios[i] + " | " + puntuaciones[i] + " | " + fallos[i] + " | " + noPalabrasEncontradas[i] + " |");
+        //Valida si se ha empezado una nueva partida
+        if (usuarios.length == 0) {
+            System.out.println("Aun no se han registrado partidas.");
+        } else {
+            System.out.println("| Usuarios | Puntuaciones | Fallos | Palabras Encontradas |");
+            for (int i = 0; i < usuarios.length; i++) {
+                System.out.println("| " + usuarios[i] + " | " + puntuaciones[i] + " | " + fallos[i] + " | " + noPalabrasEncontradas[i] + " |");
+            }
         }
     }
 
     public static void puntuacionAlta() {
+        //Areglos nuevo para almacenar los usuarios y los puntos ya ordenandos
         String[] usuariosOrdenados = Arrays.copyOf(usuarios, usuarios.length);
         int[] puntuacionesOrdenadas = Arrays.copyOf(puntuaciones, puntuaciones.length);
 
-        // Ordenar manualmente (algoritmo de selección)
-        for (int i = 0; i < puntuacionesOrdenadas.length - 1; i++) {
-            int maxIndex = i;
-            for (int j = i + 1; j < puntuacionesOrdenadas.length; j++) {
-                if (puntuacionesOrdenadas[j] > puntuacionesOrdenadas[maxIndex]) {
-                    maxIndex = j;
+        //Valida para ver si aun no se han jugado nuevas partidas
+        if (usuariosOrdenados.length == 0 && puntuacionesOrdenadas.length == 0) {
+            System.out.println("Aun no se han registrado partidas.");
+        } else {
+            // Ciclo para recorrer hasta el penultimo elemento
+            for (int i = 0; i < puntuacionesOrdenadas.length - 1; i++) {
+                int indiceMaximo = i;
+                //Ciclo que recorre en una posicion incial + 1
+                for (int j = i + 1; j < puntuacionesOrdenadas.length; j++) {
+                    //Valida si la posición j es mayor que el valor máximo actual
+                    if (puntuacionesOrdenadas[j] > puntuacionesOrdenadas[indiceMaximo]) {
+                        //Actualiza el indiceMaximo con el índice j.
+                        indiceMaximo = j;
+                    }
                 }
+                //Guarda el valor maximo
+                int tempPuntuacion = puntuacionesOrdenadas[i];
+                //Asigna el valor maximo encontrado a la posicion actual
+                puntuacionesOrdenadas[i] = puntuacionesOrdenadas[indiceMaximo];
+                //Asigna en la posicion actual el maximo
+                puntuacionesOrdenadas[indiceMaximo] = tempPuntuacion;
+
+                //Guarda el usuario con valor maximo
+                String tempUsuario = usuariosOrdenados[i];
+                //Asigna el usuario con valor maximo encontrado a la posicion actual
+                usuariosOrdenados[i] = usuariosOrdenados[indiceMaximo];
+                //Asigna el usuario en la posicion actual el maximo
+                usuariosOrdenados[indiceMaximo] = tempUsuario;
             }
-            // Intercambiar puntuaciones
-            int tempPuntuacion = puntuacionesOrdenadas[i];
-            puntuacionesOrdenadas[i] = puntuacionesOrdenadas[maxIndex];
-            puntuacionesOrdenadas[maxIndex] = tempPuntuacion;
 
-            // Intercambiar usuarios
-            String tempUsuario = usuariosOrdenados[i];
-            usuariosOrdenados[i] = usuariosOrdenados[maxIndex];
-            usuariosOrdenados[maxIndex] = tempUsuario;
-        }
-
-        // Mostrar los 3 mejores jugadores
-        System.out.println("| Posicion | Usuario | Puntuacion |");
-
-        int limite = Math.min(3, usuariosOrdenados.length); // Mostrar máximo 3 jugadores
-        for (int i = 0; i < limite; i++) {
-            System.out.printf((i + 1) + " " + usuariosOrdenados[i] + " " + puntuacionesOrdenadas[i]);
+            System.out.println("| Posicion | Usuario | Puntuacion |");
+            //Permite solo mostrar maximo 3 jugadores
+            int limite = Math.min(3, usuariosOrdenados.length);
+            for (int i = 0; i < limite; i++) {
+                System.out.println((i + 1) + ") " + usuariosOrdenados[i] + " " + puntuacionesOrdenadas[i]);
+            }
         }
     }
 }
