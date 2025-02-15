@@ -17,6 +17,8 @@ public class SopaDeLetras {
      */
     public static int cantidadPalabras = 0;
     public static String[] palabras;
+    public static int tamañoTablero = 25;
+    public static char[][] tablero = new char[tamañoTablero][tamañoTablero];
 
     public static void main(String[] args) {
         // TODO code application logic here
@@ -74,7 +76,7 @@ public class SopaDeLetras {
                     menuPalabras();
                     break;
                 case 2:
-
+                    jugar();
                     break;
                 case 3:
                     salir = true;
@@ -195,6 +197,110 @@ public class SopaDeLetras {
             }
             //Se coloca null en la ultima posicion 
             palabras[palabras.length - 1] = null;
+        }
+    }
+
+    public static void jugar() {
+
+        Scanner sc = new Scanner(System.in);
+
+        iniciarTablero();
+        colocarPalabras();
+        mostrarTablero();
+
+    }
+
+    //Metodo para incializar el tablero con espacios vacios
+    public static void iniciarTablero() {
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                tablero[i][j] = ' ';
+            }
+        }
+    }
+
+    //Metodo para colocar palabras en el tablero inicalizado
+    public static void colocarPalabras() {
+        //Recorre la cantidad de palabras
+        for (int i = 0; i < cantidadPalabras; i++) {
+            String palabra = palabras[i];
+
+            //Valida si existe un null dentro del array lo ignora y continua
+            if (palabra == null) {
+                continue;
+            }
+            
+            boolean colocada = false;
+            while (!colocada) {
+
+                //Genera una fila aleatorias segun el tamaño del tablero
+                int fila = (int) (Math.random() * tamañoTablero);
+                //Genera una columna aleatoria segun el tamaño del tablero
+                int columna = (int) (Math.random() * tamañoTablero);
+                //Variable con 50% horizontalmente true 
+                boolean horizontal = Math.random() < 0.5;
+
+                //Condicion para verificar que la palabra va horizontal 
+                if (horizontal && columna + palabra.length() <= tamañoTablero) {
+                    boolean puedeColocar = true;
+
+                    //Ciclo para recorrer la palabra
+                    for (int j = 0; j < palabra.length(); j++) {
+                        //Validacion para ver si las posiciones que se usaran van a ser vacias
+                        if (tablero[fila][columna + j] != ' ') {
+                            puedeColocar = false;
+                        }
+                    }
+                    if (puedeColocar) {
+                        for (int j = 0; j < palabra.length(); j++) {
+                            //Separa el string en char y lo coloca en el tablero
+                            tablero[fila][columna + j] = palabra.charAt(j);
+                        }
+                        colocada = true;
+                    }
+                    colocada = true;
+
+                    //Condicion para verificar que la palabra va vertical
+                } else if (!horizontal && fila + palabra.length() <= tamañoTablero) {
+                    boolean puedeColocar = true;
+
+                    //Ciclo para recorrer la palabra
+                    for (int j = 0; j < palabra.length(); j++) {
+                        //Validacion para ver si las posiciones que se usaran van a ser vacias
+                        if (tablero[fila + j][columna] != ' ') {
+                            puedeColocar = false;
+                        }
+                    }
+                    if (puedeColocar) {
+                        for (int j = 0; j < palabra.length(); j++) {
+                            //Separa el string en char y lo coloca en el tablero
+                            tablero[fila + j][columna] = palabra.charAt(j);
+                        }
+                        colocada = true;
+                    }
+                }
+            }
+        }
+
+        //Ciclo para recorrer todo el tablero filas y columnas
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                //Condicion para buscar los espacios vacios
+                if (tablero[i][j] == ' ') {
+                    //Rellena los esapcion con letras aleatorias
+                    tablero[i][j] = (char) ('a' + (int) (Math.random() * 26));
+                }
+            }
+        }
+    }
+
+    //Metodo para imprimir el tablero 25x25
+    public static void mostrarTablero() {
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                System.out.print(tablero[i][j] + " ");
+            }
+            System.out.println();
         }
     }
 
