@@ -4,6 +4,7 @@
  */
 package sopadeletras;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -19,6 +20,11 @@ public class SopaDeLetras {
     public static String[] palabras;
     public static int tamañoTablero = 25;
     public static char[][] tablero = new char[tamañoTablero][tamañoTablero];
+    public static String[] usuarios = new String[0];
+    public static int[] puntuaciones = new int[0];
+    public static int puntosIniciales = 25;
+    public static int[] fallos = new int[0];
+    public static int[] noPalabrasEncontradas = new int[0];
 
     public static void main(String[] args) {
         // TODO code application logic here
@@ -41,13 +47,13 @@ public class SopaDeLetras {
                     nuevaPartida();
                     break;
                 case 2:
-
+                    historialPartidas();
                     break;
                 case 3:
-
+                    puntuacionAlta();
                     break;
                 case 4:
-
+                    System.out.println("Selvin Raúl Chuquiej Andrade - 202405516 -IPC1D");
                     break;
                 case 5:
                     salir = true;
@@ -62,6 +68,29 @@ public class SopaDeLetras {
 
         boolean salir = false;
         Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ingresa tu nombre: ");
+        String nombre = sc.nextLine();
+
+        //Crea una copia del arreglo pero con un tamaño incrementado en 1
+        usuarios = Arrays.copyOf(usuarios, usuarios.length + 1);
+        //Asigna el nombre del nuevo usuario a la ultima posicion
+        usuarios[usuarios.length - 1] = nombre;
+
+        //Crea una copia del arreglo pero con un tamaño incrementado en 1
+        puntuaciones = Arrays.copyOf(puntuaciones, puntuaciones.length + 1);
+        //Asigna los puntos iniciales en la ultima posicion
+        puntuaciones[puntuaciones.length - 1] = puntosIniciales;
+
+        //Crea una copia del arreglo pero con un tamaño incrementado en 1
+        fallos = Arrays.copyOf(fallos, fallos.length + 1);
+        //Asigna los fallos iniciales en la ultima posicion
+        fallos[fallos.length - 1] = 0;
+
+        //Crea una copia del arreglo pero con un tamaño incrementado en 1
+        noPalabrasEncontradas = Arrays.copyOf(noPalabrasEncontradas, noPalabrasEncontradas.length + 1);
+        //Asigna el numero de palabras encontradas iniciales en la ultima posicion
+        noPalabrasEncontradas[noPalabrasEncontradas.length - 1] = 0;
 
         while (!salir) {
             System.out.println("----------------------");
@@ -204,10 +233,47 @@ public class SopaDeLetras {
 
         Scanner sc = new Scanner(System.in);
 
+        int palabrasEncontradas = 0;
+        int intentos = 4;
+        int partidaActual = puntuaciones.length - 1;
+
         iniciarTablero();
         colocarPalabras();
         mostrarTablero();
 
+        //Mientra intentos no sea 0 y las palabras encontradas no sea igual a 
+        //la cantidad de palabras no se terminara el juego
+        while (intentos != 0 && palabrasEncontradas < cantidadPalabras) {
+            System.out.print("Palabra: ");
+            String palabraUsuario = sc.nextLine().toUpperCase();
+            int indicePalabra = buscarPalabra(palabraUsuario);
+
+            if (indicePalabra != -1) {
+                String palabra = palabras[indicePalabra];
+                int tamañoPalabra = palabra.length();
+
+                puntuaciones[partidaActual] += tamañoPalabra;
+                noPalabrasEncontradas[partidaActual]++;
+
+                marcarPalabra(palabraUsuario);
+                palabrasEncontradas++;
+
+                System.out.println("Palabras identificadas: " + palabrasEncontradas);
+                System.out.println("Palabras pendientes: " + (cantidadPalabras - palabrasEncontradas));
+                System.out.println("Puntos: " + puntuaciones[partidaActual]);
+            } else {
+                puntuaciones[partidaActual] -= 5;
+                fallos[partidaActual]++;
+                intentos--;
+                System.out.println("Fallos: " + fallos[partidaActual]);
+                System.out.println("Puntos: " + puntuaciones[partidaActual]);
+            }
+            mostrarTablero();
+        }
+
+        if (intentos == 0) {
+            System.out.println("Que lo siento has perdido");
+        }
     }
 
     //Metodo para incializar el tablero con espacios vacios
@@ -229,7 +295,7 @@ public class SopaDeLetras {
             if (palabra == null) {
                 continue;
             }
-            
+
             boolean colocada = false;
             while (!colocada) {
 
@@ -304,6 +370,59 @@ public class SopaDeLetras {
         }
     }
 
+    //Metodo para remplazar las palabras encontradas con #
+    public static void marcarPalabra(String palabra) {
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                //Verifica si la primera letra de la palabra esta en alguna posicion "i" o "j"
+                if (tablero[i][j] == palabra.charAt(0)) {
+                    boolean encontrada = true;
+                    //Recorre la palabra empezando de la segunda letra
+                    for (int k = 1; k < palabra.length(); k++) {
+                        //Verifica si la letra no coincide o sale de los limites del tablero
+                        if (j + k >= tamañoTablero || tablero[i][j + k] != palabra.charAt(k)) {
+                            encontrada = false;
+                            break;
+                        }
+                    }
+                    //Si la palabra se encuentra completa en la fila
+                    if (encontrada) {
+                        //Remplaza la palabra por #
+                        for (int k = 0; k < palabra.length(); k++) {
+                            tablero[i][j + k] = '#';
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                //Verifica si la primera letra de la palabra esta en alguna posicion "i" o "j"
+                if (tablero[i][j] == palabra.charAt(0)) {
+                    boolean encontrada = true;
+                    //Recorre la palabra empezando de la segunda letra
+                    for (int k = 1; k < palabra.length(); k++) {
+                        //Verifica si la letra no coincide o sale de los limites del tablero
+                        if (i + k >= tamañoTablero || tablero[i + k][j] != palabra.charAt(k)) {
+                            encontrada = false;
+                            break;
+                        }
+                    }
+                    //Si la palabra se encuentra completa en la columna
+                    if (encontrada) {
+                        //Remplaza la palabra por #
+                        for (int k = 0; k < palabra.length(); k++) {
+                            tablero[i + k][j] = '#';
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     //Metodo para buscar palabras dentro del arreglo palabras
     public static int buscarPalabra(String palabra) {
         for (int i = 0; i < cantidadPalabras; i++) {
@@ -315,5 +434,44 @@ public class SopaDeLetras {
         }
         //Retorna falso si la palabra no se encuentra
         return -1;
+    }
+
+    public static void historialPartidas() {
+        System.out.println("| Usuarios | Puntuaciones | Fallos | Palabras Encontradas |");
+        for (int i = 0; i < usuarios.length; i++) {
+            System.out.println("| " + usuarios[i] + " | " + puntuaciones[i] + " | " + fallos[i] + " | " + noPalabrasEncontradas[i] + " |");
+        }
+    }
+
+    public static void puntuacionAlta() {
+        String[] usuariosOrdenados = Arrays.copyOf(usuarios, usuarios.length);
+        int[] puntuacionesOrdenadas = Arrays.copyOf(puntuaciones, puntuaciones.length);
+
+        // Ordenar manualmente (algoritmo de selección)
+        for (int i = 0; i < puntuacionesOrdenadas.length - 1; i++) {
+            int maxIndex = i;
+            for (int j = i + 1; j < puntuacionesOrdenadas.length; j++) {
+                if (puntuacionesOrdenadas[j] > puntuacionesOrdenadas[maxIndex]) {
+                    maxIndex = j;
+                }
+            }
+            // Intercambiar puntuaciones
+            int tempPuntuacion = puntuacionesOrdenadas[i];
+            puntuacionesOrdenadas[i] = puntuacionesOrdenadas[maxIndex];
+            puntuacionesOrdenadas[maxIndex] = tempPuntuacion;
+
+            // Intercambiar usuarios
+            String tempUsuario = usuariosOrdenados[i];
+            usuariosOrdenados[i] = usuariosOrdenados[maxIndex];
+            usuariosOrdenados[maxIndex] = tempUsuario;
+        }
+
+        // Mostrar los 3 mejores jugadores
+        System.out.println("| Posicion | Usuario | Puntuacion |");
+
+        int limite = Math.min(3, usuariosOrdenados.length); // Mostrar máximo 3 jugadores
+        for (int i = 0; i < limite; i++) {
+            System.out.printf((i + 1) + " " + usuariosOrdenados[i] + " " + puntuacionesOrdenadas[i]);
+        }
     }
 }
