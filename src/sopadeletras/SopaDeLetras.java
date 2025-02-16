@@ -8,14 +8,10 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 /**
- *
  * @author Selvi
  */
 public class SopaDeLetras {
 
-    /**
-     * @param args the command line arguments
-     */
     public static int cantidadPalabras = 0;
     public static String[] palabras;
     public static int tamañoTablero = 25;
@@ -27,8 +23,6 @@ public class SopaDeLetras {
     public static int[] noPalabrasEncontradas = new int[0];
 
     public static void main(String[] args) {
-        // TODO code application logic here
-
         boolean salir = false;
         Scanner sc = new Scanner(System.in);
 
