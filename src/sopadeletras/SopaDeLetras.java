@@ -40,7 +40,7 @@ public class SopaDeLetras {
             System.out.println("4. Informacion");
             System.out.println("5. Salir");
             System.out.println("----------------------");
-
+            System.out.print("Selecciona una opcion: ");
             while (!sc.hasNextInt()) {
                 System.out.println("Porfavor ingresa un dijito");
                 sc.nextLine();
@@ -293,8 +293,10 @@ public class SopaDeLetras {
 
         int palabrasEncontradas = 0;
         int intentos = 4;
+        //Guarda el ultimo elemento del arreglo puntuaciones
         int partidaActual = puntuaciones.length - 1;
 
+        //Valida si aun no se han guardado palabras
         if (cantidadPalabras == 0) {
             System.out.println("Aun no se han agregado palabras");
         } else {
@@ -313,10 +315,12 @@ public class SopaDeLetras {
             if (indicePalabra != -1) {
                 String palabra = palabras[indicePalabra];
                 int tamañoPalabra = palabra.length();
-
+                
+                //Suma la logitud de la palabra encontrada
                 puntuaciones[partidaActual] += tamañoPalabra;
+                //Aumenta el contador de palabras encontradas
                 noPalabrasEncontradas[partidaActual]++;
-
+                //Marca la palabra que ingreso el usuario 
                 marcarPalabra(palabraUsuario);
                 palabrasEncontradas++;
 
@@ -324,8 +328,11 @@ public class SopaDeLetras {
                 System.out.println("Palabras pendientes: " + (cantidadPalabras - palabrasEncontradas));
                 System.out.println("Puntos: " + puntuaciones[partidaActual]);
             } else {
+                //Si no se encontro la palabta se resta 5
                 puntuaciones[partidaActual] -= 5;
+                //Incrementa el contandor de fallos 
                 fallos[partidaActual]++;
+                //Reduce el numero de intentos
                 intentos--;
                 System.out.println("Fallos: " + fallos[partidaActual]);
                 System.out.println("Puntos: " + puntuaciones[partidaActual]);
